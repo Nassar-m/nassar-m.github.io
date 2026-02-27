@@ -1,0 +1,23 @@
+title: Identity in Depth
+description: IAM, Zero Trust, and Microsoft Security for regulated industries
+author: John Nassar
+email: ""
+url: "https://nassar-m.github.io"
+
+theme: minima
+
+minima:
+  skin: dark
+
+header_pages:
+  - pages/identity-access.md
+  - pages/zero-trust.md
+  - pages/exchange.md
+  - pages/automation.md
+  - pages/compliance.md
+  - about.md
+
+show_excerpts: true
+
+plugins:
+  - jekyll-feed
