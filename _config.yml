@@ -3,7 +3,10 @@ description: IAM, Zero Trust, and Microsoft Security for regulated industries
 author: John Nassar
 url: "https://nassar-m.github.io"
 
-theme: midnight
+theme: minima
+
+minima:
+  skin: dark
 
 header_pages:
   - pages/identity-access.md
