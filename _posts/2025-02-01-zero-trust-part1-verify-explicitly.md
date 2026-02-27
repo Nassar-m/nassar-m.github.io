@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Zero Trust in Microsoft Entra ID — Part 1: Verify Explicitly"
 date: 2025-02-01
 categories: zero-trust
