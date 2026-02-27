@@ -1,19 +1,22 @@
-title: "Identity in Depth"
-description: "IAM, Zero Trust, and Microsoft Security for regulated industries"
-author: Your Name
+title: Identity in Depth
+description: IAM, Zero Trust, and Microsoft Security for regulated industries
+author: John Nassar
+email: your@email.com
 
-nav_links:
-  - title: Home
-    url: /
-  - title: Identity & Access
-    url: /pages/identity-access/
-  - title: Zero Trust
-    url: /pages/zero-trust/
-  - title: Exchange
-    url: /pages/exchange/
-  - title: Automation
-    url: /pages/automation/
-  - title: Compliance
-    url: /pages/compliance/
-  - title: About
-    url: /about/
+theme: minima
+
+minima:
+  skin: dark
+
+header_pages:
+  - pages/identity-access.md
+  - pages/zero-trust.md
+  - pages/exchange.md
+  - pages/automation.md
+  - pages/compliance.md
+  - about.md
+
+show_excerpts: true
+
+plugins:
+  - jekyll-feed
