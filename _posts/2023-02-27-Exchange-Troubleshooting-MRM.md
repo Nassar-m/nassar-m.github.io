@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "Troubleshooting-MRM"
+title: "Exchange Online Retention Policies: A Practical Configuration Guide for Regulated Environments"
 date: 2023-02-27
-categories: Exchange
-tags: [Compliance, Retention Policy, Exchange, M365]
-excerpt: "step-by-step guide to help you troubleshoot Legacy Retention policy like a pro!"
+categories: exchange
+tags: [exchange-online, retention, compliance, purview, bafin, dora]
+excerpt: "A hands-on guide to designing and implementing retention policies in Exchange Online using Microsoft Purview — covering regulatory retention requirements, litigation hold, and common configuration mistakes in regulated environments."
 ---
 
-# Troubleshooting-MRM
 step-by-step guide to help you troubleshoot Legacy Retention policy like a pro!  
 
 
