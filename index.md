@@ -3,10 +3,6 @@ layout: default
 title: "ZeroKnown"
 ---
 
-**Mustafa Nassar** — Senior M365 Administrator, 8+ years in the Microsoft ecosystem including 5 years at Microsoft Premier Support. Based in Germany, specialising in identity architecture, Zero Trust, and regulatory compliance for European financial institutions. [About →](/about/)
-
----
-
 Notes on M365 security — what actually gets configured, not just what the frameworks say.
 
 ---
