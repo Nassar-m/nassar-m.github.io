@@ -14,7 +14,7 @@ The fix isn't disabling user consent entirely — that just creates a helpdesk b
 
 This guide walks through that setup end-to-end using PowerShell and Microsoft Graph. One heads-up: the steps aren't in the most intuitive order — you create the policy first, then scope it, then build the role, then assign it. Just follow the sequence and it'll make sense by the end.
 
-<img width="1488" height="600" alt="Entra admin center showing the permission grant policy configuration" src="https://github.com/user-attachments/assets/82176104-f732-432b-bffa-6ba1bb4a08fd" />
+<img src="/assets/media/Custom-consent-policy.png" width="1488" height="810" alt="Entra admin center showing the permission grant policy configuration" style="max-width:100%;height:auto;" />
 
 ## Prerequisites
 
@@ -124,7 +124,7 @@ New-MgRoleManagementDirectoryRoleAssignment `
 
 You can also verify the assignment in the Entra admin center under **Identity > Roles and administrators**.
 
-<img width="1344" height="600" alt="Entra admin center showing the custom role assignment for the Contoso Application Consent Manager role" src="https://github.com/user-attachments/assets/ad24affc-5df2-42cb-bbb3-203877888e66" />
+<img src="/assets/media/Custom-consent-policy2.png" width="1344" height="799" alt="Entra admin center showing the custom role assignment for the Contoso Application Consent Manager role" style="max-width:100%;height:auto;" />
 
 
 ## Step 6: Validate the setup
