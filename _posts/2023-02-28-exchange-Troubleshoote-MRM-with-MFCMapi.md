@@ -1,89 +1,48 @@
 ---
 layout: post
-title: "How to Use MFCMapi to Troubleshoot Messaging records management (MRM)"
+title: "How to Use MFCMapi to Troubleshoot Messaging Records Management (MRM)"
 date: 2023-02-28
 categories: exchange
-tags: [exchange-online, retention, compliance, purview, bafin, dora]
-excerpt: ""
+tags: [exchange-online, retention, mrm, mfcmapi, troubleshooting]
+excerpt: "A step-by-step guide to using MFCMapi to inspect mailbox retention tags at the MAPI level — useful when PowerShell alone doesn't tell you why a specific item isn't being processed by MRM."
 ---
 
-# How to Use MFCMapi to Troubleshoot Messaging records management (MRM).
+If you're dealing with retention policy issues in Exchange Online (M365), you need to know how to use MFCMapi to troubleshoot them. In our previous article on [Troubleshooting Retention Policies in Exchange Online](/exchange/2023/02/27/exchange-retention-policies.html), we covered the basics of retention policies and why they're important. Now we'll dive deeper into MFCMapi — the tool that lets you inspect individual items at the MAPI level to find out exactly which retention tag is applied and why.
 
-If you're dealing with retention policy issues in Exchange Online
-(M365), then you need to know how to use MFCMapi to troubleshoot them.
-In our previous article, "[**Troubleshooting Retention Policies in
-Exchange
-Online**](https://www.linkedin.com/pulse/troubleshooting-retention-policies-exchange-online-part-1-nassar/)",
-we covered the basics of retention policies and why they're important.
-Now, in this article, we'll dive deeper into the tool that can help you
-troubleshoot those issues: MFCMapi. By the end of this article, you'll
-be able to use MFCMapi to check mailbox clients and items, understand
-MAPI properties, and find individual problematic items. So, if you're
-ready to master retention policies, let's get started!
+First, download MFCMapi from GitHub. Once you have it, start the program and put it in Online mode by going to **Tools** > **Options** and selecting **Use MDB_ONLINE** and **MAPI_NO_CACHE**.
 
-First, download MFCMapi from the internet. Once you have it, start the
-program and put it in an "Online" mode by going to **Tools** \>
-**Options** and selecting "Use **MDB_ONLINE**" and "**MAPI_NO_CACHE**."
+<img src="/assets/media/image1.png" style="width:6.5in;height:4.78194in" alt="MFCMapi Options dialog showing MDB_ONLINE and MAPI_NO_CACHE settings" />
 
-<img src="./media/image1.png" style="width:6.5in;height:4.78194in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
+Next, go to **Session** > **Logon** and open the profile name of interest.
 
-Next, go to **Session** \> **Logon** and open the profile name of
-interest.
+<img src="/assets/media/image2.png" style="width:6.27083in;height:4.10417in" alt="MFCMapi Session Logon dialog" />
 
-<img src="./media/image2.png" style="width:6.27083in;height:4.10417in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
+From there, open **Root Container** > **Top of Information Store** > right-click on the Inbox > **Open Associated Contents Table**. Sort the results by Message Class and look for the item with Message Class **IPM.Configuration.MRM**. Find the property **PR_ROAMING_XMLSTREAM** — double-click it and view the Stream (Text) window. Copy the text to an XML editor (e.g. Notepad++).
 
-From there, open the **Root Container** \> **Top of Information Store**
-\> right-click on the Inbox \> right-click to **Open Associated Contents
-Table**. Sort the results by Message Class and look for the only item
-that has Message Class = **IPM. Configuration.MRM**. Look for the
-property PR_ROAMING_XMLSTEAM – double-click it and view the Steam (Text)
-window. Copy the Text to any XML editor you like (for example: Notepad++
-).
+<img src="/assets/media/image3.png" style="width:6.5in;height:4.48264in" alt="MFCMapi showing the Associated Contents Table with IPM.Configuration.MRM item selected" />
 
-<img src="./media/image3.png" style="width:6.5in;height:4.48264in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
+<img src="/assets/media/image4.png" style="width:6.5in;height:1.07639in" alt="MFCMapi PR_ROAMING_XMLSTREAM property value" />
 
-<img src="./media/image4.png" style="width:6.5in;height:1.07639in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
+If you suspect a specific item is the problem, examine it directly:
 
-If you think that certain item/items are the main issue, you may quickly
-examine them using the procedures below:
+1. Double-click the affected folder, or right-click > **Open Content Table**
+2. Locate the message by subject, sender, recipient, or received date
+3. Look for these two MAPI properties:
 
-Double-click on the impacted folder or right-click \> Open content
-table.
+**PR_ARCHIVE_DATE** (`0x301F0040` — DateTime)
+The date the item is scheduled for archival. Stamped by Exchange when online, calculated by Outlook when cached/offline.
 
-Locate the message using the subject, sender, recipient or received
-date.
+**PR_ARCHIVE_TAG** (`0x30180102` — GUID)
+The archive policy applied to the item (implicit or explicit). To identify which retention tag this maps to, take the hex value, convert it to a GUID, and compare it against your tags:
 
-**PR_ARCHIVE_DATE** - 0x301F0040 - DateTime
+```powershell
+Get-RetentionPolicyTag | fl Name, RetentionId
+```
 
-DateTime for item archival. This is a calculated property when cached or
-offline and is stamped by Exchange when online on every item.
+Match the `RetentionId` against the GUID from MFCMapi to find out exactly which tag is applied to the item.
 
-**PR_ARCHIVE_TAG** - 0x30180102 - GUID
+<img src="/assets/media/image5.png" style="width:6.5in;height:3.81944in" alt="MFCMapi content table showing PR_ARCHIVE_DATE and PR_ARCHIVE_TAG properties on a mailbox item" />
 
-The archive policy an item is under (either implicit or explicit).
-Stamped on every item. Outlook calculates when cached or offline.
-Exchange stamps when online. It has a Hex value which you need to
-convert to Guid to compare it to the Tags in your file, or you can get
-it directly using Get-RetentionTag. Now, if we run
-Get-RetentionPolicyTag and compare each tag RetentionId with the Guid
-above, we will find out which retention tag is applied to the item.
+<img src="/assets/media/image6.png" style="width:6.5in;height:1.77014in" alt="MFCMapi property value for PR_ARCHIVE_TAG showing hex GUID" />
 
-<img src="./media/image5.png" style="width:6.5in;height:3.81944in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
-
-<img src="./media/image6.png" style="width:6.5in;height:1.77014in"
-alt="Es wurde kein Alt-Text für dieses Bild angegeben." />
-
-By following these steps, you'll be able to quickly identify and fix
-retention issues with your Exchange mailboxes. For more information on
-troubleshooting retention issues, check out the Microsoft Docs article
-[**Search and Replace Retention tag on Microsoft Exchange 2010
-(MRM)**](https://learn.microsoft.com/en-us/exchange/security-and-compliance/messaging-records-management/retention-tags-and-policies)
-
-I hope you find this information helpful when troubleshooting your next
-retention case.
-
+By following these steps you can quickly identify which retention tag is applied to a specific item and confirm whether MRM is processing it correctly. For further reference see [Retention tags and retention policies in Exchange Online](https://learn.microsoft.com/en-us/exchange/security-and-compliance/messaging-records-management/retention-tags-and-policies).

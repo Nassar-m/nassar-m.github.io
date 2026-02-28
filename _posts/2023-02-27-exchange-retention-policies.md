@@ -7,156 +7,217 @@ tags: [exchange-online, retention, compliance, purview, bafin, dora]
 excerpt: "A hands-on guide to designing and implementing retention policies in Exchange Online using Microsoft Purview — covering regulatory retention requirements, litigation hold, and common configuration mistakes in regulated environments."
 ---
 
+You're an Exchange administrator and you discover that an important mailbox has stopped receiving emails due to quota issues. You assigned a retention policy weeks ago to reduce the quota — but the quota hasn't moved. In this article we'll walk through troubleshooting both legacy MRM retention policies and compliance retention policies, and how to use MFCMapi to inspect individual item tags.
 
-step-by-step guide to help you troubleshoot Legacy Retention policy like a pro!  
-
-
-Image You're an Exchange administrator, and you discover that one essential mailbox has stopped operating and is unable to send or receive emails due to quota issues, despite the fact that you have assigned a restricted retention policy to the mailbox to reduce the high quota, but it seems the quota is not reduced after a week and causing a bigger issue.
-In this article, we will demonstrate troubleshooting exchange online retention policies, as well as new compliance retention policies and using MFCMapi to examine the items tags.
-Part1: Troubleshooting Legacy retention policy:
-It is important to know that you do not have to go through all the troubleshooting steps listed below to resolve the MRM issue; you might solve the problem with the first two or three steps, but in this blog, we will try to cover all the various troubleshooting procedures that you could need. Typically, you will use Start-ManagedFolderAssistance to start processing individual mailboxes, which can take up to 7 days on Exchange Online. However, we urge that you examine the situation from the beginning until you identify and fix the root cause. If there is no problem, it may be resolved automatically after MFA (Managed Folder Assistance) processes the mailbox.
-In the first part we will discuss the points below:
-1.      Identify the assigned retention policy to your mailbox
-2.      Check the actions of your retention tags included in the policy
-3.      Enforce MFA to process your mailbox
-4.      Verify if MFA processed the mailbox correctly
-5.      Review Mailbox diagnostics for MRM component
-6.      Examine mailbox folder statistics
-
-NOTE: MRM will not process a mailbox if the size of the mailbox is less than 10 MB or if there is no retention policy assigned to the mailbox.
-
-1.    Identify the assigned exchange retention policy to your mailbox:  
- There are two kinds of retention policies that may have an impact on your inbox. The Exchange Retention Policy, which we will troubleshoot in part 1, and the Compliance Retention Policy which we will address in part 2. Therefore, it is usually a good idea to start by running the command below to see which one is assigned and if Retention hold and ELC processing enabled or disabled or your mailbox.
-Get-Mailbox <Identity> | fl InPlaceHolds, Retention*, ELC*
-![image](https://user-images.githubusercontent.com/113264461/207298507-4a47e96b-de13-4959-b9ec-e8960b600fb2.png)
-
-In this example, we will check the three parameters below and see if there is any retention hold or if ELC is disabled.
-Check the Retention Policy that has been applied to your mailbox. In this case, we can observe that the policy that has been assigned is "Default MRM Policy.” For more info: Retention tags and retention policies in Exchange Online | Microsoft Docs
-Confirm that ELcProcessingDisabled is false (default value). When the ElcProcessingDisabled property is set to True, it prevents the Managed Folder Assistant from processing the mailbox at all. So, in addition to not processing the MRM retention policy, other functions performed by the Managed Folder assistant, such as expiring items in the Recoverable Items folder by marking them for permanent removal, will not be performed. Except the processing of deleted items.
-Verify the Retention hold is not enabled (“false”). If RetentionHoldEnabled is true then MFA will continue to process the MRM retention policy on the mailbox (including applying retention tags to items), but it will not expire items in folders that are visible to the user (that is, in folders in the IPM subtree of the mailbox). However, the Managed Folder Assistant will continue to process items in the Recoverable Items folder, including purging expired items. So, setting ElcProcessingDisabled to True is more restrictive and has more consequences than setting the RetentionHoldEnabled property to True. For more information: Place a mailbox on retention hold in Exchange Online | Microsoft Docs
-
-2.    Check the retention tags actions included in the policy
-After reviewing the retention policy, we need to know which Retention tags have been assigned to the mailbox and what their actions are. To find out, we must execute the following commands:
-
-Get-RetentionPolicy -Identity “Default MRM Policy” | select -ExpandProperty retentionpolicytaglinks
-$tags = Get-RetentionPolicy -Identity “Default MRM Policy” | select -ExpandProperty retentionpolicytaglinks
-$tags | foreach {Get-RetentionPolicyTag $_ | ft Name, Type, Age*, Retention*}
-
-![image](https://user-images.githubusercontent.com/113264461/207298802-8ed9ce54-71e3-47ea-b8e5-95c1e2287e79.png)
-
-In the output above, you can see further information about each tag in the retention policy applied to your mailbox:
-The type of Tags included in your policy.
-The action (Retention Action) applied to items
-As well as at which age (AgeLimitForRetention), etc.
-You need to determine whether these tags are the applicable tags to your mailbox and what the default tag DRT (Default Retention Tag) applied to your mailbox is.
-
-3.    Enforce MFA to process the mailbox
-Use the following command to force MFA (Managed Folder Assistant) to begin processing the impacted mailbox after checking the policies and tags and confirming that the correct tags are applied:
-Start-ManagedFolderAssistant -Identity <User>
-NOTE: the SLA to process the mailbox in Exchange Online is up to 7 days.
-If you changed the mailbox's retention policy, you might use the -FullCrawl argument to recalculate the whole mailbox:
- Start-ManagedFolderAssistant -Identity <User> -FullCrawl
-This parameter is available only in the cloud-based service. The FullCrawl switch recalculates the application of tags across the whole mailbox. You do not need to specify a value with this switch.
-
-4.    Verify MFA processing
-Verify that MFA properly processed the mailbox. Running the MFA with or without a full crawl will not inform you whether MRM processed the mailbox correctly or not. After some time, you may view the most recent MFA processing timestamp (ELCLastSuccessTimestamp).
- $MRMLogs = [xml] ((Export-MailboxDiagnosticLogs <user> -ExtendedProperties).mailboxlog)
-$MRMLogs.Properties.MailboxTable.Property | ? {$_.Name -like “*ELC*”}
-
-![image](https://user-images.githubusercontent.com/113264461/207299206-b411ec8a-a07b-495c-a9ff-30a784b7ca85.png)
-
-The mailbox diagnostics will display the number of deleted or archived items that MRM processed last time as well as the time stamp of last successful run.
-
-5.    Check MRM mailbox diagnostics
-If, after double-checking the policy, tags, and latest processing time, you still believe this was ineffective and the mailbox quota is not being reduced as expected because MFA did not process the mailbox correctly, you may verify MRM exceptions (if any) from the primary mailbox – use:
-Export-MailboxDiagnosticLogs <identity> -ComponentName MRM
-
-![image](https://user-images.githubusercontent.com/113264461/207299337-c12fb3e0-4952-4659-979e-67ad8a8ba517.png)
-
-
-Example of the error:
-Resource 'DiskLatency(GUID:... Name:??? Volume:\...) is unhealthy and should not be accessed.
-or Resource 'Processor' is unhealthy and should not be accessed
-Determine the frequency with which the same error has happened. If the problem has not been present for more than two days, re-run MFA. If the issue persists or has been present for more than two days, you should contact Microsoft support. but in the meanwhile, please review the compliance retention policy (Part 2).
-
-6.    Examine mailbox folder statistics
-
-If the mailbox quota is still not reduced and you see some errors in the diagnostics and you still suspect MRM did not process the entire mailbox properly, double-check mailbox folder statistics. In certain circumstances, this may direct you to the root cause of the problem:  
- Get-MailboxFolderStatistics <User> -FolderScope inbox -IncludeOldestAndNewestItems -IncludeAnalysis | select name, items*, oldes*, top*
-
-![image](https://user-images.githubusercontent.com/113264461/207299418-90d1ef0d-b3d2-4132-8e66-163e46c68113.png)
-
-o   NOTE: If you have an Item that is larger than 150 MB, there will be a problem moving it to the archive, and you will have to move it manually or remove it.
-o   Consider that the maximum number of objects per folder is one million. If any of the folders reaches the 1 million item limit, nothing will be transferred to that folder. This is common for the Inbox folder, and ELC Assistant simply produces an error.
-For example, a big item, like in the previous example, may cause the mailbox to stop processing, in which case you must manually move the item to the archive or delete it. Similarly, to the 1M restriction, you must manually reduce the number of items in the folder to allow MRM to handle the mailbox again.
-
-Part2: Troubleshooting compliance retention policy:
-
-Part one discussed how to troubleshoot the legacy retention policy in Exchange online, and this second part will look at the compliance retention policy, going over two different scenarios. Please refer to this article if you need to continue troubleshooting the compliance retention rules.
-Scenario 1: Unable to clear the recoverable items folder
-One of my customers complained than an important mailbox was unable to receive meeting requests and that the sender was receiving this error message ”'554 5.2.0 STOREDRV.Deliver.Exception:QuotaExceededException.MapiExceptionShutoffQuotaExceeded; Failed to process message due to a permanent exception with message.”  We later discovered that this mailbox had a full recoverable items folder. Together we will go through the steps needed to solve this issue:
-
-1. Identify the compliance retention policy applied to your mailbox:
-We will also start by identifying the associated policy to the impacted mailbox by using the policy lookup tab under compliance admin center: Information governance - Microsoft 365 compliance
-
-![image](https://user-images.githubusercontent.com/113264461/207302937-1c2cd8c8-3e52-42c2-921b-58a55ace37a2.png)
-
-Or you can do it using the PowerShell command below:
-Get-Mailbox <Identity> | fl InPlaceHolds
-
-![image](https://user-images.githubusercontent.com/113264461/207303057-7d9538a5-dacc-4fed-900b-eb6473e3ca2d.png)
-
-Examine the Compliance retention policy which will be found under InPlaceHolds parameter. For more info: Learn about retention policies & labels to automatically retain or delete content – Microsoft 365 Compliance | Microsoft Docs
-
-2. Verify compliance retention rule applied to your mailbox, and what it does
-This only applies if a compliance Retention policy has been assigned under the "InPlaceHolds" Parameter.
-To identify the compliance retention rule, run the following command to obtain the rule, the retention actions, and the duration for this rule. Using the policy GUID acquired from the previous command (Get-Mailbox | fl InPlaceHold), you may retrieve the compliance rule, action on this policy that is applied to your mailbox:
-Get-Mailbox | fl InPlaceHolds
-Get-RetentionComplianceRule | ? {$_.Policy -match “18aec5b1-04d8-40e4-8290-7b35f9834f24”}| fl Name, Retention*
-
-![image](https://user-images.githubusercontent.com/113264461/207303166-7f209679-f4ff-4305-a34a-e9dc419c7ed3.png)
-
-In the above example, the items will be kept for five years (1825 days) before being deleted. or you can review the policy from compliance Admin center under Information governance - Microsoft 365 compliance
-You have two possibilities at this moment. Archive the items in the recoverable items folder using a legacy retention policy, which is the best choice for keeping the data while being compliant with your company policy, or permanently delete the data after consulting with your compliance team. In this case, my customer decided to permanently delete the recoverable items, knowing that the data would be forever erased and unrecoverable. As a result, we proceeded to the following step, which would be to exclude the impacted user from the compliance retention policy.
-
-If needed, exclude the impacted mailbox from the compliance retention policy:
-If you found that the compliance policy is the primary cause of the high quota by retaining the items for a specific period and preventing MFA from purging the items, such as in this case where the compliance policy retaining the items for 5 years, the items will not be purged before this period. Simply follow the steps below to exclude your mailbox from that policy:
-Locate the compliance policy from the previous step under the retention policy tab from compliance Admin center, modify it, and then click Next > Next until you reach the location tab, where you can choose the exclusion button to exclude your mailbox from the policy.
-
-![image](https://user-images.githubusercontent.com/113264461/207303261-e7bc5672-2f6e-4454-9520-7e72926178ae.png)
-
-Or use the command: Set-RetentionCompliancePolicy -Identity <policy name> - AddExchangeLocationException "Kitty Petersen". It could take up to one day  for the exclusion to be applied. for more information about the time frame see: How long it takes for retention policies to take effect
-To confirm that the policy distributed correctly after the exclusion, use the below commands:
-Get-RetentionCompliancePolicy <Policy Name> -DistributionDetail | fl *distribution*, *exchangelocation*   
-
-![image](https://user-images.githubusercontent.com/113264461/207303318-c5b1dd33-e138-4cf8-b9de-6c1faf00f270.png)
-
-If there is an error in the distribution status, use the following command to redistribute the policy:
-Set-RetentionCompliancePolicy -Identity <policy name> -RetryDistribution
-The RetryDistribution switch specifies whether to redistribute the policy to all Exchange Online and SharePoint Online locations. You do not need to specify a value with this switch.
-Check the delayed hold
-After any type of hold is removed from a mailbox, a delay hold is applied. This means that the actual removal of the hold is delayed for 30 days. This gives admins an opportunity to search for or recover mailbox items that will be purged (purged) from the mailbox.
-DelayHoldApplied: This feature is applied to email-related content in a user's mailbox. It will be True after the hold is removed; therefore, you need verify this parameter and disable it, if necessary, in order to clean the recoverable items folder.
-Set-Mailbox <username> -RemoveDelayHoldApplied
-Note: This scenario might apply to any folder, such as the inbox or any other folder, that you wish to clear using the legacy retention policy but the compliance retention policy prevents MFA from doing so.
-
-
-Scenario 2: Restoring bulk deleted items that were deleted by mistake.
-
- Finally, if you have ever assigned a compliance retention policy to the incorrect mailbox or to multiple mailboxes by accident, this will result in bulk removal. For example, one of my customers applied a policy that deletes content after six months to the entire company instead of a single user, resulting in the bulk deletion of items older than six months. It was a massive task, but we were ultimately able to recover the deleted items by following the steps below:
-To avoid processing the mailbox via MFA while restoring the deleted items, first disable ELC processing for the entire organization or for the impacted mailbox.
-Set-OrganizationConfig –ELcProcessingDisabled $True
-use PowerShell to recover deleted emails from the recoverable items folder and restore them to their original location:
-You can restore the mail items based on the deletion date, for example:
-Get-RecoverableItems -identity <User> -ResultSize unlimited -FilterItemType IPM.Note - FilterStartTime “dd/mm/yyyy” | Restore-RecoverableItems
-
- For more information:
-·       Recover deleted messages in a user's mailbox in Exchange Online | Microsoft Docs
-·       Get-RecoverableItems (ExchangePowerShell) | Microsoft Docs
-·       Restore-RecoverableItems (ExchangePowerShell) | Microsoft Docs 
-
- I hope you find this information helpful when troubleshooting your next retention case.
+**NOTE:** MRM will not process a mailbox if the size is less than 10 MB or if there is no retention policy assigned.
 
 ---
 
-*[← Back to Exchange & Messaging](/pages/exchange/)*
+## Part 1: Troubleshooting Legacy Retention Policy (MRM)
+
+We'll work through these steps in order. You may not need all of them — often the first two or three will point you to the fix. But it's worth understanding the full sequence before you start.
+
+1. Identify the assigned retention policy
+2. Check the retention tag actions
+3. Enforce MFA to process the mailbox
+4. Verify MFA processed correctly
+5. Review mailbox diagnostics for MRM
+6. Examine mailbox folder statistics
+
+---
+
+### 1. Identify the assigned retention policy
+
+Two kinds of retention policy can affect a mailbox: the Exchange (MRM) Retention Policy and the Compliance Retention Policy. Start by running the command below to see which is assigned, and whether Retention Hold or ELC processing is enabled or disabled.
+
+```powershell
+Get-Mailbox <Identity> | fl InPlaceHolds, Retention*, ELC*
+```
+
+![MRM policy check output showing InPlaceHolds, RetentionHoldEnabled and ELCProcessingDisabled](https://user-images.githubusercontent.com/113264461/207298507-4a47e96b-de13-4959-b9ec-e8960b600fb2.png)
+
+Check these three parameters:
+
+- **RetentionPolicy** — confirms which policy is assigned (e.g. "Default MRM Policy")
+- **ELCProcessingDisabled** — must be `False`. When `True`, the Managed Folder Assistant (MFA) is blocked from processing the mailbox entirely.
+- **RetentionHoldEnabled** — must be `False`. When `True`, MFA processes tags but won't expire visible items. Items in the Recoverable Items folder are still processed.
+
+---
+
+### 2. Check the retention tag actions
+
+Find out which tags are in the assigned policy and what their actions are:
+
+```powershell
+Get-RetentionPolicy -Identity "Default MRM Policy" | select -ExpandProperty RetentionPolicyTagLinks
+
+$tags = Get-RetentionPolicy -Identity "Default MRM Policy" | select -ExpandProperty RetentionPolicyTagLinks
+$tags | foreach { Get-RetentionPolicyTag $_ | ft Name, Type, Age*, Retention* }
+```
+
+![Output showing retention tag names, types, AgeLimitForRetention and RetentionAction](https://user-images.githubusercontent.com/113264461/207298802-8ed9ce54-71e3-47ea-b8e5-95c1e2287e79.png)
+
+Confirm that the correct tags are applied and note what the Default Retention Tag (DRT) is doing.
+
+---
+
+### 3. Enforce MFA to process the mailbox
+
+Once you've confirmed the policy and tags are correct, force MFA to begin processing:
+
+```powershell
+Start-ManagedFolderAssistant -Identity <User>
+```
+
+**NOTE:** SLA for MFA processing in Exchange Online is up to 7 days.
+
+If you recently changed the retention policy, use `-FullCrawl` to recalculate the entire mailbox:
+
+```powershell
+Start-ManagedFolderAssistant -Identity <User> -FullCrawl
+```
+
+---
+
+### 4. Verify MFA processed correctly
+
+Running MFA won't tell you if it succeeded. After some time, check the last successful processing timestamp:
+
+```powershell
+$MRMLogs = [xml] ((Export-MailboxDiagnosticLogs <User> -ExtendedProperties).MailboxLog)
+$MRMLogs.Properties.MailboxTable.Property | Where-Object { $_.Name -like "*ELC*" }
+```
+
+![Mailbox diagnostics output showing ELCLastSuccessTimestamp and item counts](https://user-images.githubusercontent.com/113264461/207299206-b411ec8a-a07b-495c-a9ff-30a784b7ca85.png)
+
+This shows the timestamp of the last successful run and how many items were deleted or archived.
+
+---
+
+### 5. Review mailbox diagnostics for MRM
+
+If the quota still isn't reducing, check for MRM exceptions on the primary mailbox:
+
+```powershell
+Export-MailboxDiagnosticLogs <Identity> -ComponentName MRM
+```
+
+![MRM diagnostic log output showing any processing exceptions](https://user-images.githubusercontent.com/113264461/207299337-c12fb3e0-4952-4659-979e-67ad8a8ba517.png)
+
+Common errors:
+
+- `Resource 'DiskLatency(GUID:...) is unhealthy and should not be accessed`
+- `Resource 'Processor' is unhealthy and should not be accessed`
+
+If the error has been present for less than two days, re-run MFA. If it persists beyond two days, contact Microsoft Support and proceed to Part 2.
+
+---
+
+### 6. Examine mailbox folder statistics
+
+If you still suspect MRM isn't processing the full mailbox, check folder statistics:
+
+```powershell
+Get-MailboxFolderStatistics <User> -FolderScope Inbox -IncludeOldestAndNewestItems -IncludeAnalysis | select Name, Items*, Oldest*, Top*
+```
+
+![Mailbox folder statistics output showing item counts and sizes per folder](https://user-images.githubusercontent.com/113264461/207299418-90d1ef0d-b3d2-4132-8e66-163e46c68113.png)
+
+Two things that will stop MRM from processing a folder:
+
+- **Items larger than 150 MB** — cannot be moved to archive automatically; must be moved or deleted manually
+- **Folders exceeding 1 million items** — MRM stops processing that folder entirely; you must manually reduce the item count
+
+---
+
+## Part 2: Troubleshooting Compliance Retention Policy
+
+Part 1 covered legacy MRM. This part covers compliance retention policies — the ones managed through Microsoft Purview.
+
+---
+
+### Scenario 1: Unable to clear the Recoverable Items folder
+
+A mailbox stops receiving meeting requests with error `554 5.2.0 STOREDRV.Deliver.Exception:QuotaExceededException`. The Recoverable Items folder is full and a compliance retention policy is preventing MFA from purging items.
+
+**Step 1 — Identify the compliance retention policy**
+
+Use the Policy Lookup tab in the Compliance admin centre, or run:
+
+```powershell
+Get-Mailbox <Identity> | fl InPlaceHolds
+```
+
+![Output showing InPlaceHolds with a compliance retention policy GUID](https://user-images.githubusercontent.com/113264461/207303057-7d9538a5-dacc-4fed-900b-eb6473e3ca2d.png)
+
+**Step 2 — Verify what the retention rule does**
+
+Using the policy GUID from the previous command, retrieve the rule, its action, and its retention duration:
+
+```powershell
+Get-Mailbox <Identity> | fl InPlaceHolds
+Get-RetentionComplianceRule | Where-Object { $_.Policy -match "<PolicyGUID>" } | fl Name, Retention*
+```
+
+![Compliance retention rule output showing RetentionAction and RetentionDuration](https://user-images.githubusercontent.com/113264461/207303166-7f209679-f4ff-4305-a34a-e9dc419c7ed3.png)
+
+**Step 3 — Exclude the mailbox from the policy (if needed)**
+
+If the compliance policy is the root cause, exclude the affected mailbox. In the Compliance admin centre, locate the policy under **Information governance > Retention policies**, click through to the Locations tab, and add the mailbox as an exclusion.
+
+![Compliance admin centre showing the exclusion option on the Locations tab](https://user-images.githubusercontent.com/113264461/207303261-e7bc5672-2f6e-4454-9520-7e72926178ae.png)
+
+Or via PowerShell:
+
+```powershell
+Set-RetentionCompliancePolicy -Identity "<PolicyName>" -AddExchangeLocationException "<Mailbox>"
+```
+
+Allow up to 24 hours for the exclusion to distribute. Verify distribution with:
+
+```powershell
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | fl *Distribution*, *ExchangeLocation*
+```
+
+If distribution shows an error:
+
+```powershell
+Set-RetentionCompliancePolicy -Identity "<PolicyName>" -RetryDistribution
+```
+
+**Step 4 — Remove the delay hold**
+
+After any hold is removed, a 30-day delay hold is automatically applied. Check and remove it:
+
+```powershell
+Set-Mailbox <Username> -RemoveDelayHoldApplied
+```
+
+---
+
+### Scenario 2: Restoring bulk-deleted items
+
+If a compliance policy that deletes content was accidentally applied to the wrong mailboxes, follow these steps to recover the items.
+
+First, disable ELC processing to pause MFA while you restore:
+
+```powershell
+Set-OrganizationConfig -ELCProcessingDisabled $True
+```
+
+Then restore deleted items from the Recoverable Items folder, filtered by deletion date:
+
+```powershell
+Get-RecoverableItems -Identity <User> -ResultSize Unlimited -FilterItemType IPM.Note -FilterStartTime "dd/mm/yyyy" | Restore-RecoverableItems
+```
+
+Re-enable ELC processing once the restore is complete:
+
+```powershell
+Set-OrganizationConfig -ELCProcessingDisabled $False
+```
+
+**References:**
+- [Recover deleted messages in Exchange Online](https://learn.microsoft.com/en-us/exchange/recipients-in-exchange-online/manage-user-mailboxes/recover-deleted-messages)
+- [Get-RecoverableItems](https://learn.microsoft.com/en-us/powershell/module/exchange/get-recoverableitems)
+- [Restore-RecoverableItems](https://learn.microsoft.com/en-us/powershell/module/exchange/restore-recoverableitems)
