@@ -4,7 +4,7 @@ title: "How to Use MFCMapi to Troubleshoot Messaging Records Management (MRM)"
 date: 2023-02-28
 categories: exchange
 tags: [exchange-online, retention, mrm, mfcmapi, troubleshooting]
-excerpt: "A step-by-step guide to using MFCMapi to inspect mailbox retention tags at the MAPI level — useful when PowerShell alone doesn't tell you why a specific item isn't being processed by MRM."
+excerpt: "How to use MFCMapi to inspect individual mailbox items at the MAPI level — find exactly which retention tag is applied to a specific item when PowerShell alone is not enough to diagnose an MRM issue."
 ---
 
 If you're dealing with retention policy issues in Exchange Online (M365), you need to know how to use MFCMapi to troubleshoot them. In our previous article on [Troubleshooting Retention Policies in Exchange Online](/exchange/2023/02/27/exchange-retention-policies.html), we covered the basics of retention policies and why they're important. Now we'll dive deeper into MFCMapi — the tool that lets you inspect individual items at the MAPI level to find out exactly which retention tag is applied and why.

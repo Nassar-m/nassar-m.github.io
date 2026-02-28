@@ -4,7 +4,7 @@ title: "Exchange Online Retention Policies: A Practical Configuration Guide for 
 date: 2023-02-27
 categories: exchange
 tags: [exchange-online, retention, compliance, purview, bafin, dora]
-excerpt: "A hands-on guide to designing and implementing retention policies in Exchange Online using Microsoft Purview — covering regulatory retention requirements, litigation hold, and common configuration mistakes in regulated environments."
+excerpt: "Step-by-step troubleshooting for Exchange Online retention issues — diagnosing legacy MRM policy failures, clearing full Recoverable Items folders blocked by compliance policies, and recovering bulk-deleted items using PowerShell."
 ---
 
 You're an Exchange administrator and you discover that an important mailbox has stopped receiving emails due to quota issues. You assigned a retention policy weeks ago to reduce the quota — but the quota hasn't moved. In this article we'll walk through troubleshooting both legacy MRM retention policies and compliance retention policies, and how to use MFCMapi to inspect individual item tags.
