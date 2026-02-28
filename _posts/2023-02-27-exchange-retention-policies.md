@@ -2,7 +2,7 @@
 layout: post
 title: "Exchange Online Retention Policies: A Practical Configuration Guide for Regulated Environments"
 date: 2023-02-27
-categories: exchange
+categories: [Exchange]
 tags: [exchange-online, retention, compliance, purview, bafin, dora]
 excerpt: "Step-by-step troubleshooting for Exchange Online retention issues — diagnosing legacy MRM policy failures, clearing full Recoverable Items folders blocked by compliance policies, and recovering bulk-deleted items using PowerShell."
 ---

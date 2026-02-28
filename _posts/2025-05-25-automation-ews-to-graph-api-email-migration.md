@@ -2,7 +2,7 @@
 layout: post
 title: "From EWS to Microsoft Graph API: A Practical Migration Guide for Email Automation"
 date: 2025-05-25
-categories: automation
+categories: [Automation]
 tags: [graph-api, python, ews, exchange-online, oauth, automation, migration]
 excerpt: "EWS is going away. This is a practical guide to migrating email automation from Exchange Web Services to Microsoft Graph API — covering the new auth model, Azure app registration, and a standalone Python script to verify the setup before touching your application code."
 ---

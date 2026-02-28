@@ -2,7 +2,7 @@
 layout: post
 title: "Zero Trust in Microsoft Entra ID — Part 2: Use Least Privilege Access"
 date: 2025-03-01
-categories: zero-trust
+categories: [Zero Trust]
 tags: [entra-id, pim, rbac, least-privilege, dora, zero-trust]
 excerpt: "Part 2 of the Zero Trust series covers Least Privilege Access — configuring Privileged Identity Management, role assignments, access reviews, and entitlement management in Entra ID with DORA regulatory mappings."
 ---

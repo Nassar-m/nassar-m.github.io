@@ -2,7 +2,7 @@
 layout: post
 title: "Get-MigrationReports: Automated Exchange Migration Diagnostics"
 date: 2022-09-22
-categories: automation
+categories: [Automation]
 tags: [exchange, migration, powershell, diagnostic, automation]
 excerpt: "When a mailbox migration fails, Microsoft Support will ask you to manually collect a long list of cmdlet outputs before triaging begins. This script automates the entire process — one run per mailbox, full XML exports, and a grouped failure summary."
 ---

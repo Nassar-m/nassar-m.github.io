@@ -1,15 +1,89 @@
-title: M365 Notes
-description: IAM, Zero Trust, and Microsoft Security for regulated industries
-author: Mustafa Nassar
+lang: en
+timezone: Europe/Berlin
+
+title: ZeroKnown
+tagline: M365 security — what actually gets configured
+description: >-
+  Practical configuration guides for Microsoft identity, Zero Trust,
+  Exchange Online, and regulatory compliance for regulated industries.
+
 url: "https://nassar-m.github.io"
-theme: jekyll-theme-hacker
-show_excerpts: true
+
+github:
+  username: Nassar-m
+
+social:
+  name: Mustafa Nassar
+  email: ""
+  links:
+    - https://www.linkedin.com/in/mnassar365/
+    - https://github.com/Nassar-m
+
+theme_mode: dark
+
+avatar: ""
+
+toc: true
+
+comments:
+  active: ""
+
+paginate: 10
+
+theme: jekyll-theme-chirpy
+
 plugins:
   - jekyll-feed
-header_pages:
-  - pages/identity-access.md
-  - pages/zero-trust.md
-  - pages/exchange.md
-  - pages/automation.md
-  - pages/compliance.md
-  - about.md
+  - jekyll-paginate
+  - jekyll-redirect-from
+  - jekyll-sitemap
+  - jekyll-archives
+
+collections:
+  tabs:
+    output: true
+    sort_by: order
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false
+      toc: true
+      permalink: /posts/:title/
+  - scope:
+      path: _tabs
+      type: tabs
+    values:
+      layout: page
+      permalink: /:title/
+
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - README.md
+  - LICENSE
+  - .bundle/
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/

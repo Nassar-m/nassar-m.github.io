@@ -2,7 +2,7 @@
 layout: post
 title: "Zero Trust in Microsoft Entra ID — Part 3: Assume Breach"
 date: 2025-04-01
-categories: zero-trust
+categories: [Zero Trust]
 tags: [entra-id, sentinel, defender, assume-breach, dora, zero-trust]
 excerpt: "Part 3 covers the Assume Breach principle — segmentation, monitoring, incident response integration, and blast radius reduction using Entra ID and Microsoft Defender with DORA regulatory mappings."
 ---

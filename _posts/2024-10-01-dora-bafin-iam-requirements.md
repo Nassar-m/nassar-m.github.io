@@ -2,7 +2,7 @@
 layout: post
 title: "DORA and BaFin BAIT: What They Actually Require from Your IAM Controls"
 date: 2024-10-01
-categories: compliance
+categories: [Compliance]
 tags: [dora, bafin, compliance, iam, audit, regulatory]
 excerpt: "A plain-language breakdown of what DORA and BaFin BAIT actually require from identity and access management — cutting through regulatory language to the specific technical controls your organisation needs to demonstrate."
 ---

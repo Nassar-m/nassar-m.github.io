@@ -2,7 +2,7 @@
 layout: post
 title: "Zero Trust in Microsoft Entra ID — Part 4: Complete DORA Compliance Mapping"
 date: 2025-05-01
-categories: zero-trust
+categories: [Zero Trust]
 tags: [dora, bafin, compliance, audit, zero-trust, entra-id]
 excerpt: "Part 4 is the full audit reference — a complete mapping table of every Entra ID Zero Trust control to its corresponding DORA article and BaFin BAIT requirement, designed for use in audit preparation and evidence collection."
 ---

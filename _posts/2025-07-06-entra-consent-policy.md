@@ -2,7 +2,7 @@
 layout: post
 title: "Entra ID Application Consent Policies: Controlling OAuth Permissions at Enterprise Scale"
 date: 2025-07-06
-categories: identity-access
+categories: [Identity & Access]
 tags: [entra-id, consent, oauth, app-governance, security]
 excerpt: "Someone in your org clicks \"Accept\" on an OAuth prompt. The app now has Mail.Send access for their account and nobody got an alert. That's the default behavior in most Entra tenants."
 ---
