@@ -85,21 +85,6 @@ $stats.Report.Failures |
     Format-List Timestamp, FailureSide, Message
 ```
 
----
-
-## What Was Fixed in v2.4
-
-The original v2.3 script had several bugs that produced incomplete output or silent failures.
-
-| Bug | Fix |
-|---|---|
-| `$MigrationEndpoint` (wrong case) in filename — always wrote `MigrationEndpoint_.xml` | Uses `$MigrationEndPoint.Identity` for a meaningful name |
-| `MailboxStatistics` and `MoveHistory[0]` exported without null checks — potential terminating error | Both now have null and `.Count` guards before export |
-| `Export-Summary` hardcoded `$File = "Text-Summary.txt"` — always wrote to current directory | Refactored to accept a `-SummaryFile` parameter; per-mailbox path passed from the main loop |
-| `PercentComplete` shown as `Status` twice in the summary | Fixed to show `Status` and `PercentComplete` separately |
-| `Write-Host` used invalid `-Value` parameter — would error under strict mode | Replaced with the correct positional argument syntax |
-| No null guard on `$MoveRequestStatistics` in `Export-Summary` — would throw on missing data | Early return with `WARN` log if the statistics object is null |
-| No timestamps in `LogFile.txt` — hard to correlate events | `Write-Log` helper adds `[yyyy-MM-dd HH:mm:ss]` to every entry |
 
 ---
 
