@@ -107,4 +107,4 @@ The original v2.3 script had several bugs that produced incomplete output or sil
 
 MIT — use at your own risk. No warranties are given.
 
-Original script by **Mustafa Nassar** · [PowerShell-Scripts on GitHub](https://github.com/Nassar-m/PowerShell-Scripts)
+Original script by **Mustafa Nassar** · [PowerShell-Scripts on GitHub](https://github.com/Nassar-m/PowerShell-Scripts/blob/main/Get-MigrationReports.ps1)
