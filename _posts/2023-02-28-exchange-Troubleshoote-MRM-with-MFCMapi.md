@@ -1,3 +1,12 @@
+---
+layout: post
+title: "How to Use MFCMapi to Troubleshoot Messaging records management (MRM)"
+date: 2023-02-28
+categories: exchange
+tags: [exchange-online, retention, compliance, purview, bafin, dora]
+excerpt: ""
+---
+
 # How to Use MFCMapi to Troubleshoot Messaging records management (MRM).
 
 If you're dealing with retention policy issues in Exchange Online
@@ -77,3 +86,4 @@ troubleshooting retention issues, check out the Microsoft Docs article
 
 I hope you find this information helpful when troubleshooting your next
 retention case.
+
