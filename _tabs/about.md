@@ -5,16 +5,14 @@ icon: fas fa-address-card
 order: 5
 ---
 
-**Mustafa Nassar** — Senior M365 Administrator, 8+ years in the Microsoft ecosystem including 5 years at Microsoft Premier Support. Based in Germany, specialising in identity architecture, Zero Trust implementation, and regulatory compliance for European financial institutions.
+Hey, I'm Mustafa.
 
-**Current focus:** Transitioning into IAM architecture and consulting roles — deep expertise in Entra ID, Exchange Online, and DORA/BaFin compliance frameworks.
+I work in M365 — identity, security, Exchange, the whole stack. Most of what ends up here started as something I had to figure out at work: a config that wasn't obvious, a policy that behaved differently than the docs suggested, or a PowerShell one-liner that took way too long to get right.
 
----
+Before going into administration I spent a few years at Microsoft Premier Support, which meant sitting with a lot of broken tenants and learning what actually goes wrong in production. These days I'm mostly in Entra ID, Exchange Online, and anything touching Zero Trust or automation.
 
-**Specialisations:** Microsoft Entra ID &middot; Zero Trust Architecture &middot; Exchange Online &middot; Identity Lifecycle Management &middot; DORA/BaFin BAIT &middot; PowerShell & Graph API Automation
-
-**Certifications:** SC-200 (Security Operations Analyst) &middot; SC-300 (Identity and Access Administrator)
+The posts aren't polished documentation. They're more like notes from someone who went down a rabbit hole and came back with something useful. If it saves you a few hours of searching, that's the whole point.
 
 ---
 
-*Connect on [LinkedIn](https://www.linkedin.com/in/mnassar365/) or via [GitHub](https://github.com/Nassar-m).*
+Find me on [LinkedIn](https://www.linkedin.com/in/mnassar365/) or [GitHub](https://github.com/Nassar-m).

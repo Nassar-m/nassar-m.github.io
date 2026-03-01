@@ -1,11 +1,11 @@
 lang: en
 timezone: Europe/Berlin
 
-title: ZeroKnown
-tagline: M365 security — what actually gets configured
+title: M365 Security Notes
+tagline: Sharing what I'm working through in M365 security, Entra ID, Defender, and automation. Less of an expert, more of someone who got curious and kept going.
 description: >-
-  Practical configuration guides for Microsoft identity, Zero Trust,
-  Exchange Online, and regulatory compliance for regulated industries.
+  Sharing what I'm working through in M365 security, Entra ID, Defender, and automation.
+  Less of an expert, more of someone who got curious and kept going.
 
 url: "https://nassar-m.github.io"
 
