@@ -21,7 +21,7 @@ social:
 
 theme_mode: dark
 
-avatar:
+avatar: /assets/img/avatar.jpg
 
 toc: true
 
