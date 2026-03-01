@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Zero Trust in Microsoft Entra ID — Part 1: Verify Explicitly"
-date: 2025-02-01
+date: 2026-02-25
 categories: [Zero Trust]
 tags: [entra-id, conditional-access, mfa, dora, bafin, zero-trust]
 excerpt: "A concrete implementation blueprint for the first Zero Trust principle — Verify Explicitly — with 14 specific Entra ID controls and direct DORA/BaFin regulatory mappings."
