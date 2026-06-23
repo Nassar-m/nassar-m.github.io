@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Zero Trust in Microsoft Entra ID, Part 2: Use Least Privilege Access"
+title: Zero Trust in Microsoft Entra ID, Part 2 - Use Least Privilege Access
 date: 2026-06-23
 categories: [Zero Trust]
 tags: [entra-id, pim, least-privilege, identity-governance, dora, zero-trust]
-excerpt: "Eight steps to limit standing access by scope and time, each mapped to the DORA RTS articles a supervisor will test you against."
+excerpt: Eight steps to limit standing access by scope and time, each mapped to the DORA RTS articles a supervisor will test you against.
 ---
 
 Part 1 covered the first Zero Trust principle, Verify Explicitly: authenticate and risk-assess every access request before it goes through. That answers *who* is asking. This part deals with the next question, which is how much you hand them once they're through the door.
