@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Zero Trust in Microsoft Entra ID, Part 3: Assume Breach"
+title: Zero Trust in Microsoft Entra ID, Part 2 - Use Least Privilege Access
 date: 2026-06-23
 categories: [Zero Trust]
-tags: [entra-id, sentinel, siem, incident-response, dora, zero-trust]
-excerpt: "The final part of the Entra ID Zero Trust blueprint: eight detection and response controls for the day an attacker gets in, from log export and Sentinel analytics to automated remediation, ordered by priority and mapped to the DORA articles that govern detection, response, and logging."
+tags: [entra-id, pim, least-privilege, identity-governance, dora, zero-trust]
+excerpt: Eight steps to limit standing access by scope and time, each mapped to the DORA RTS articles a supervisor will test you against.
 ---
 
 This is the final article in the series. Part 1 built the secure front door with *Verify Explicitly*. Part 2 cut down the internal attack surface with *Use Least Privilege Access*. This part deals with what happens when an attacker gets past both, which is the point of the third Zero Trust principle: **Assume Breach**.
